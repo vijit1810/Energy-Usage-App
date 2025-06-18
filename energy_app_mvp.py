@@ -26,32 +26,7 @@ df = load_data()
 
 tab1, tab2, tab3 = st.tabs(["📊 Dashboard", "📝 Manual Input", "🔮 Predictions"])
 
-# ========== TAB 1 ==========
-with tab1:
-    st.subheader("📈 Daily Usage Overview")
-    if not df.empty:
-        st.metric("Total Days Logged", len(df))
-        st.metric("Avg Daily Units", round(df["units_consumed"].mean(), 2))
-        st.metric("Estimated Monthly Bill", f"₹ {round(df['total_bill'].sum(), 2)}")
 
-       
-        # Show last entries
-        st.markdown("### 🧾 Last 5 Days' Entries")
-        st.dataframe(df.tail(5), use_container_width=True)
-
-        # Smart alerts
-        st.markdown("### ⚠️ Smart Alerts")
-        avg_units = df["units_consumed"].mean()
-        last = df.sort_values("date").iloc[-1]
-
-        if last["units_consumed"] > 1.2 * avg_units:
-            st.warning(f"⚡ High usage alert: {last['units_consumed']} kWh (avg {avg_units:.2f})")
-        if last.get("ac_usage_hours", 0) > 6:
-            st.warning(f"🌬️ AC used for {last['ac_usage_hours']} hrs. Try reducing usage.")
-        if last.get("geyser_usage_minutes", 0) > 40:
-            st.warning(f"🚿 Geyser used for {last['geyser_usage_minutes']} mins. May be heating too long.")
-    else:
-        st.info("No data yet. Please log your usage in the next tab.")
 
 # ========== TAB 2 ==========
 with tab2:
@@ -109,3 +84,30 @@ with tab3:
             "Date": future_days.date,
             "Predicted Units": [round(p, 2) for p in preds]
         }))
+
+# ========== TAB 1 ==========
+with tab1:
+    st.subheader("📈 Daily Usage Overview")
+    if not df.empty:
+        st.metric("Total Days Logged", len(df))
+        st.metric("Avg Daily Units", round(df["units_consumed"].mean(), 2))
+        st.metric("Estimated Monthly Bill", f"₹ {round(df['total_bill'].sum() + 100 , 2)}")
+
+       
+        # Show last entries
+        st.markdown("### 🧾 Last 5 Days' Entries")
+        st.dataframe(df.tail(5), use_container_width=True)
+
+        # Smart alerts
+        st.markdown("### ⚠️ Smart Alerts")
+        avg_units = df["units_consumed"].mean()
+        last = df.sort_values("date").iloc[-1]
+
+        if last["units_consumed"] > 1.2 * avg_units:
+            st.warning(f"⚡ High usage alert: {last['units_consumed']} kWh (avg {avg_units:.2f})")
+        if last.get("ac_usage_hours", 0) > 6:
+            st.warning(f"🌬️ AC used for {last['ac_usage_hours']} hrs. Try reducing usage.")
+        if last.get("geyser_usage_minutes", 0) > 40:
+            st.warning(f"🚿 Geyser used for {last['geyser_usage_minutes']} mins. May be heating too long.")
+    else:
+        st.info("No data yet. Please log your usage in the next tab.")
