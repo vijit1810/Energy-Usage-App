@@ -2,7 +2,6 @@
 
 import pandas as pd
 import streamlit as st
-import plotly.express as px
 from datetime import datetime
 
 # Load the synthetic dataset
@@ -31,9 +30,6 @@ st.metric("💰 Projected Monthly Bill", f"₹{projected_bill}")
 if alert:
     st.warning("⚠️ You are projected to exceed the monthly unit threshold! Reduce AC/Geyser usage.")
 
-# Line Chart - Units Consumed Per Day
-fig = px.line(df, x="date", y="units_consumed", title="Daily Electricity Consumption (Units)")
-st.plotly_chart(fig)
 
 # Optional: appliance breakdown
 if "ac_usage_hours" in df.columns:
