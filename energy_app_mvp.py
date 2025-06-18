@@ -25,7 +25,7 @@ if submit:
     }
 
     # Append to CSV (create if not exists)
-    file_path = "C:\Users\Vijit\Documents\Energy App\synthetic_energy_data_last_30_days.csv"
+    file_path = "synthetic_energy_data_last_30_days.csv"
     df_new = pd.DataFrame([new_row])
 
     if os.path.exists(file_path):
@@ -38,8 +38,35 @@ if submit:
     st.success("✅ Data logged successfully!")
 
 # Load the synthetic dataset
-df = pd.read_csv("C:\Users\Vijit\Documents\Energy App\synthetic_energy_data_last_30_days.csv")
+df = pd.read_csv("synthetic_energy_data_last_30_days.csv")
 df["date"] = pd.to_datetime(df["date"])
+
+# Smart alert system
+st.subheader("⚠️ Smart Usage Alerts")
+
+# Compute recent average
+avg_units = df["units_consumed"].mean()
+last_row = df.sort_values("date").iloc[-1]
+
+alerts = []
+
+# Check for high unit consumption
+if last_row["units_consumed"] > 1.2 * avg_units:
+    alerts.append(f"⚡ High electricity usage today: {last_row['units_consumed']} units vs avg {avg_units:.1f}.")
+
+# High AC usage
+if "ac_usage_hours" in last_row and last_row["ac_usage_hours"] > 6:
+    alerts.append(f"🌬️ AC used for {last_row['ac_usage_hours']} hours. Consider reducing usage.")
+
+# High geyser usage
+if "geyser_usage_minutes" in last_row and last_row["geyser_usage_minutes"] > 40:
+    alerts.append(f"🚿 Geyser used for {last_row['geyser_usage_minutes']} mins. Try lowering heating time.")
+
+if alerts:
+    for msg in alerts:
+        st.warning(msg)
+else:
+    st.success("✅ Usage is within normal range. Keep it up!")
 
 # Calculate projections
 today = df["date"].max()
