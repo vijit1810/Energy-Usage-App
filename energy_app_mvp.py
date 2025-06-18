@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
@@ -35,13 +34,7 @@ with tab1:
         st.metric("Avg Daily Units", round(df["units_consumed"].mean(), 2))
         st.metric("Estimated Monthly Bill", f"₹ {round(df['total_bill'].sum(), 2)}")
 
-        # Chart
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df["date"], y=df["units_consumed"],
-                                 mode="lines+markers", name="Units Consumed"))
-        fig.update_layout(title="📅 Daily Energy Usage", xaxis_title="Date", yaxis_title="kWh")
-        st.plotly_chart(fig, use_container_width=True)
-
+       
         # Show last entries
         st.markdown("### 🧾 Last 5 Days' Entries")
         st.dataframe(df.tail(5), use_container_width=True)
@@ -110,11 +103,7 @@ with tab3:
 
         preds = model.predict(future_df)
 
-        pred_chart = go.Figure()
-        pred_chart.add_trace(go.Bar(x=future_days.strftime("%a %d %b"), y=preds, name="Predicted kWh"))
-        pred_chart.update_layout(title="🔮 Next 7 Days Predicted Usage", yaxis_title="kWh")
-        st.plotly_chart(pred_chart, use_container_width=True)
-
+        
         st.write("### 🔢 Prediction Table")
         st.dataframe(pd.DataFrame({
             "Date": future_days.date,
