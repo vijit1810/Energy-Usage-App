@@ -25,7 +25,7 @@ if submit:
     }
 
     # Append to CSV (create if not exists)
-    file_path = "synthetic_energy_data_last_30_days.csv"
+    file_path = "C:\Users\Vijit\Documents\Energy App\synthetic_energy_data_last_30_days.csv"
     df_new = pd.DataFrame([new_row])
 
     if os.path.exists(file_path):
@@ -38,7 +38,7 @@ if submit:
     st.success("✅ Data logged successfully!")
 
 # Load the synthetic dataset
-df = pd.read_csv("synthetic_energy_data_last_30_days.csv")
+df = pd.read_csv("C:\Users\Vijit\Documents\Energy App\synthetic_energy_data_last_30_days.csv")
 df["date"] = pd.to_datetime(df["date"])
 
 # Calculate projections
