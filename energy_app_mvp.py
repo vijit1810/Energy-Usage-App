@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 import os
-from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split
 import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Smart Energy Saver", layout="wide")
 st.title("⚡ Smart Energy Saver App")
-st.markdown("Track your daily electricity usage, get smart alerts, and predict future consumption.")
+st.markdown("Track your electricity usage, get alerts, and predict future consumption.")
 
 DATA_FILE = "synthetic_energy_data_last_30_days.csv"
 
@@ -25,7 +25,6 @@ def load_data():
 
 df = load_data()
 
-# Tabs
 tab1, tab2, tab3 = st.tabs(["📊 Dashboard", "📝 Manual Input", "🔮 Predictions"])
 
 # ========== TAB 1 ==========
@@ -78,7 +77,7 @@ with tab2:
                 "ac_usage_hours": ac_hours,
                 "geyser_usage_minutes": geyser_mins,
                 "tv_usage_hours": tv_hours,
-                "total_bill": round(today_units * 7.5, 2)  # Assume ₹7.5/unit
+                "total_bill": round(today_units * 7.5, 2)
             }
 
             new_df = pd.DataFrame([new_entry])
@@ -88,7 +87,7 @@ with tab2:
 
 # ========== TAB 3 ==========
 with tab3:
-    st.subheader("🔮 Predict Next 7 Days' Usage (XGBoost)")
+    st.subheader("🔮 Predict Next 7 Days' Usage (Linear Regression)")
     if len(df) < 10:
         st.info("Need at least 10 days of data to train model.")
     else:
@@ -97,10 +96,10 @@ with tab3:
         y = df["units_consumed"]
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        model = XGBRegressor(n_estimators=100)
+        model = LinearRegression()
         model.fit(X_train, y_train)
 
-        # Predict for next 7 days
+        # Predict next 7 days
         future_days = pd.date_range(df['date'].max() + pd.Timedelta(days=1), periods=7)
         future_df = pd.DataFrame({
             "day_of_week": future_days.dayofweek,
@@ -121,4 +120,3 @@ with tab3:
             "Date": future_days.date,
             "Predicted Units": [round(p, 2) for p in preds]
         }))
-
